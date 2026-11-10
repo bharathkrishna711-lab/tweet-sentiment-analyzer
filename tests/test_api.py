@@ -63,3 +63,41 @@ def test_text_over_500_characters_is_rejected(client):
 def test_missing_text_field_is_rejected(client):
     r = client.post('/predict', json={})
     assert r.status_code == 422
+
+def test_batch_returns_one_result_per_text_in_order(client):
+    texts = ['worst flight ever, lost my bag again', 'thanks for the quick help', 'Flight 482 now boards at gate B12.']
+    r = client.post('/predict/batch', json={'texts': texts})
+    assert r.status_code == 200
+    results = r.json()['results']
+    assert len(results) == 3
+    assert all(x['label'] in LABELS for x in results)
+    assert results[0]['cleaned_text'] == texts[0]
+
+
+def test_batch_matches_single_prediction(client):
+    text = 'worst flight ever, lost my bag again'
+    single = client.post('/predict', json={'text': text}).json()
+    batch = client.post('/predict/batch', json={'texts': [text, 'thanks for the quick help']}).json()['results'][0]
+    assert batch['label'] == single['label']
+    assert abs(batch['confidence'] - single['confidence']) < 0.01
+
+
+def test_batch_bad_item_does_not_fail_the_batch(client):
+    r = client.post('/predict/batch', json={'texts': ['@united https://t.co/abc123', 'great flight, thank you']})
+    assert r.status_code == 200
+    results = r.json()['results']
+    assert results[0]['label'] is None
+    assert 'Nothing left' in results[0]['error']
+    assert results[1]['label'] in LABELS
+
+
+def test_batch_empty_list_is_rejected(client):
+    assert client.post('/predict/batch', json={'texts': []}).status_code == 422
+
+
+def test_batch_too_many_texts_is_rejected(client):
+    assert client.post('/predict/batch', json={'texts': ['ok'] * 201}).status_code == 422
+
+
+def test_batch_text_over_500_characters_is_rejected(client):
+    assert client.post('/predict/batch', json={'texts': ['a' * 501]}).status_code == 422

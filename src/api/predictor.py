@@ -53,3 +53,33 @@ class SentimentPredictor:
             'cleaned_text': cleaned,
             'parts': parts,
         }
+
+    def predict_batch(self, texts, batch_size=32):
+        cleaned = [clean_tweet(t) for t in texts]
+        results = [None] * len(texts)
+        valid = [i for i, c in enumerate(cleaned) if c]
+        valid.sort(key=lambda i: len(cleaned[i]))
+
+        for start in range(0, len(valid), batch_size):
+            chunk = valid[start:start + batch_size]
+            probs = self._probs([cleaned[i] for i in chunk])
+            for i, p in zip(chunk, probs):
+                label, confidence = self._top(p)
+                results[i] = {
+                    'label': label,
+                    'confidence': confidence,
+                    'probabilities': {l: round(x, 4) for l, x in zip(self.labels, p)},
+                    'cleaned_text': cleaned[i],
+                    'error': None,
+                }
+
+        for i, r in enumerate(results):
+            if r is None:
+                results[i] = {
+                    'label': None,
+                    'confidence': None,
+                    'probabilities': None,
+                    'cleaned_text': '',
+                    'error': 'Nothing left to analyse after cleaning.',
+                }
+        return results

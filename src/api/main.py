@@ -1,12 +1,15 @@
 import os
 from contextlib import asynccontextmanager
+from typing import Annotated
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints
 
 from src.api.predictor import SentimentPredictor
+
+MAX_BATCH = 200
 
 state = {}
 
@@ -20,7 +23,7 @@ async def lifespan(app):
     state.clear()
 
 
-app = FastAPI(title='Tweet sentiment API', version='0.2.0', lifespan=lifespan)
+app = FastAPI(title='Tweet sentiment API', version='0.3.0', lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,6 +31,8 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
+
+Text = Annotated[str, StringConstraints(max_length=500)]
 
 
 class PredictRequest(BaseModel):
@@ -46,6 +51,22 @@ class PredictResponse(BaseModel):
     probabilities: dict[str, float]
     cleaned_text: str
     parts: list[Part]
+
+
+class BatchRequest(BaseModel):
+    texts: list[Text] = Field(..., min_length=1, max_length=MAX_BATCH)
+
+
+class BatchItem(BaseModel):
+    label: str | None = None
+    confidence: float | None = None
+    probabilities: dict[str, float] | None = None
+    cleaned_text: str
+    error: str | None = None
+
+
+class BatchResponse(BaseModel):
+    results: list[BatchItem]
 
 
 @app.get('/health')
@@ -69,3 +90,8 @@ def predict(req: PredictRequest):
             detail='Nothing left to analyse after cleaning (for example, only a link or a mention).',
         )
     return result
+
+
+@app.post('/predict/batch', response_model=BatchResponse)
+def predict_batch(req: BatchRequest):
+    return {'results': state['predictor'].predict_batch(req.texts)}
