@@ -38,6 +38,20 @@ DistilBERT per-class F1 on the test set: negative 0.91, neutral 0.70, positive 0
 
 **Part-level colouring.** The cleaned tweet is cut with simple rules: at `. ! ?`, and before "but", "however", "although" and "though". Parts with a single word are joined to the previous part. Each part goes through the same model. This is a demo feature: the dataset only has whole-tweet labels, so the part colours were checked by eye and not scored.
 
+
+## Batch endpoint
+
+`POST /predict/batch` takes `{"texts": [...]}` with 1 to 200 texts (each up to 500 characters) and returns one result per text, in the same order. Texts are processed in groups of 32, sorted by length to reduce padding. A text that is empty after cleaning (for example, only a link) gets an `error` message, and the rest of the batch is still scored. Part-by-part colouring is not included in batch mode.
+
+Measured speed for 200 tweets (a single run each, with only a few distinct texts):
+
+| Where | One batch of 200 | One request per tweet (estimated) |
+|---|---|---|
+| Laptop CPU | 1.4 s | 3.6 s |
+| Cloud Run (1 vCPU), measured from my laptop including network | 8.7 s | not measured |
+
+For millions of tweets, a scheduled batch job on a larger machine would be a better fit than this API.
+
 ## Known limitations
 
 - **Sarcasm.** "Love how @united lost my bag for the third time. Amazing service!" is predicted positive with 98% confidence.
