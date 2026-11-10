@@ -102,6 +102,12 @@ function App() {
               </span>
             ))}
           </p>
+          <p className="legend">
+            Colours:
+            <span className="part negative">negative</span>
+            <span className="part neutral">neutral</span>
+            <span className="part positive">positive</span>
+          </p>
 
           <p className="label">Overall</p>
           <div className="verdict">
@@ -121,10 +127,21 @@ function App() {
         </section>
       )}
 
+            <p className="footnote">
+        Mentions and links are removed and emoji are turned into words before analysis, so the text
+        above can differ slightly from what you typed. Model: DistilBERT fine-tuned on the Kaggle
+        Twitter US Airline Sentiment data (macro-F1 about 0.80 on a held-out test set). It can be
+        fooled by sarcasm, negation and non-US English, and the part colours were checked by eye, not
+        scored.
+      </p>
       <p className="footnote">
-        Model: DistilBERT fine-tuned on the Kaggle Twitter US Airline Sentiment data (macro-F1 about
-        0.80 on a held-out test set). It can be fooled by sarcasm, and the part colours were checked
-        by eye, not scored.
+        <a href="https://github.com/bharathkrishna711-lab/tweet-sentiment-analyzer" target="_blank" rel="noreferrer">
+          Code on GitHub
+        </a>
+        {' · '}
+        <a href="https://huggingface.co/Bharath-krish-11/tweet-sentiment-distilbert" target="_blank" rel="noreferrer">
+          Model on Hugging Face
+        </a>
       </p>
     </main>
   )

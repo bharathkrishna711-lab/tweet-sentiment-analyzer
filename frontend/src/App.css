@@ -28,3 +28,7 @@ button:disabled { opacity: 0.6; cursor: default; }
 .fill.positive { background: #2e9e5b; }
 .pct { text-align: right; }
 .footnote { color: #5f6368; font-size: 0.8rem; margin-top: 1.5rem; }
+
+.legend { font-size: 0.8rem; color: #5f6368; margin: -0.5rem 0 1rem; }
+.legend .part { padding: 1px 6px; margin-left: 6px; }
+a { color: #1a5fb4; }
