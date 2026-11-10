@@ -1,12 +1,16 @@
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 from src.api.predictor import SentimentPredictor
 
 state = {}
+
+ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:3000,http://localhost:5173').split(',')
 
 
 @asynccontextmanager
@@ -16,11 +20,11 @@ async def lifespan(app):
     state.clear()
 
 
-app = FastAPI(title='Tweet sentiment API', version='0.1.0', lifespan=lifespan)
+app = FastAPI(title='Tweet sentiment API', version='0.2.0', lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://localhost:3000', 'http://localhost:5173'],
+    allow_origins=ORIGINS,
     allow_methods=['*'],
     allow_headers=['*'],
 )
@@ -30,16 +34,28 @@ class PredictRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=500)
 
 
+class Part(BaseModel):
+    text: str
+    label: str
+    confidence: float
+
+
 class PredictResponse(BaseModel):
     label: str
     confidence: float
     probabilities: dict[str, float]
     cleaned_text: str
+    parts: list[Part]
 
 
 @app.get('/health')
 def health():
     return {'status': 'ok', 'model_loaded': 'predictor' in state}
+
+
+@app.get('/', include_in_schema=False)
+def root():
+    return RedirectResponse(url='/docs')
 
 
 @app.post('/predict', response_model=PredictResponse)
