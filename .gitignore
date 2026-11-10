@@ -221,3 +221,5 @@ data/raw/*.csv
 
 
 data/processed/
+
+models/distilbert_final/
