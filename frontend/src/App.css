@@ -1,0 +1,30 @@
+.page { max-width: 720px; margin: 0 auto; padding: 2rem 1rem 3rem; }
+h1 { font-size: 1.6rem; margin: 0 0 0.25rem; }
+.subtitle { color: #5f6368; margin: 0 0 1.25rem; }
+textarea { width: 100%; box-sizing: border-box; min-height: 120px; padding: 0.75rem; font: inherit; border: 1px solid #c9ccd1; border-radius: 8px; resize: vertical; }
+.row { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
+.count { font-size: 0.85rem; color: #5f6368; }
+button { font: inherit; padding: 0.5rem 1.25rem; border: 1px solid #1c1e21; background: #1c1e21; color: #fff; border-radius: 8px; cursor: pointer; }
+button:disabled { opacity: 0.6; cursor: default; }
+.examples { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.75rem; font-size: 0.9rem; color: #5f6368; }
+.chip { padding: 0.25rem 0.75rem; background: #fff; color: #1c1e21; border: 1px solid #c9ccd1; font-size: 0.85rem; }
+.note { color: #5f6368; font-size: 0.9rem; }
+.error { color: #b3261e; }
+.card { background: #fff; border: 1px solid #e1e3e6; border-radius: 12px; padding: 1.25rem; margin-top: 1.25rem; }
+.label { font-size: 0.85rem; color: #5f6368; margin: 0 0 0.35rem; }
+.tweet { font-size: 1.1rem; line-height: 2.1; margin: 0 0 1rem; }
+.part { padding: 3px 6px; border-radius: 6px; margin-right: 6px; }
+.part.negative, .pill.negative { background: #fbd5d5; color: #7a1c1c; }
+.part.neutral, .pill.neutral { background: #fdf0c2; color: #6b5200; }
+.part.positive, .pill.positive { background: #d3efd9; color: #1b5e34; }
+.verdict { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+.pill { padding: 4px 14px; border-radius: 8px; font-weight: 500; }
+.muted { color: #5f6368; font-size: 0.9rem; }
+.bar-row { display: grid; grid-template-columns: 80px 1fr 44px; gap: 0.75rem; align-items: center; margin: 0.4rem 0; font-size: 0.9rem; }
+.track { height: 8px; background: #eceef1; border-radius: 4px; overflow: hidden; }
+.fill { height: 100%; border-radius: 4px; }
+.fill.negative { background: #d64545; }
+.fill.neutral { background: #e0a800; }
+.fill.positive { background: #2e9e5b; }
+.pct { text-align: right; }
+.footnote { color: #5f6368; font-size: 0.8rem; margin-top: 1.5rem; }
